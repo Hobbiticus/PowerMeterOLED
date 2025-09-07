@@ -72,6 +72,9 @@ void setup()
       delay(100);
   }
   INA.setMaxCurrentShunt(2, 0.01); //TODO: set these values
+  INA.setBusVoltageConversionTime(6);
+  INA.setShuntVoltageConversionTime(6);
+  INA.setAverage(16);
 
   display.print("Power Meter");
   display.setCursor(0, 16);
@@ -95,29 +98,37 @@ void loop()
   display.print(P, 3);
   display.print(" W");
 
-  display.setCursor(0, 8);
+  display.setCursor(0, 16);
   display.print(V, 3);
   display.print(" V");
 
-  display.setCursor(0, 16);
+  display.setCursor(0, 32);
   display.print(I, 3);
   display.print(" A");
 
-  display.setCursor(0, 24);
+  display.setCursor(0, 48);
   display.print(Vs, 2);
   display.print(" mV");
 
   static unsigned long AnimateTicks = 500;  //how fast to animate - lower is faster
+  float dx = (int)(millis() % AnimateTicks);
+  dx /= AnimateTicks;
+  int offset = (int)(dx * ARROW_WIDTH);
+  offset -= ARROW_WIDTH; //start slightly off screen
+  const unsigned char* arrow;
   if (I < 0)
   {
-    //animate to the left
+    arrow = ArrowLeft;
+    offset *= -1;
   }
   else
   {
-    //animate to the right
+    arrow = ArrowRight;
   }
-
-
+  for (int i = 0; i < SCREEN_WIDTH / ARROW_WIDTH + 1; i++)
+    display.drawBitmap(i * ARROW_WIDTH + offset, 48, arrow, ARROW_WIDTH, ARROW_HEIGHT, 1);
   display.display();
-  delay(100);
+
+  INA.waitConversionReady();
+  //delay(100);
 }
