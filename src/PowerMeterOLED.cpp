@@ -77,6 +77,8 @@ void setup()
   // INA.setBusVoltageConversionTime(6);
   // INA.setShuntVoltageConversionTime(6);
   // INA.setAverage(16);
+  // //false -> 80mV, true -> 20mV
+  // //INA.setADCRange();
 
   display.print("PowerMeter");
   display.setCursor(48, 16);
